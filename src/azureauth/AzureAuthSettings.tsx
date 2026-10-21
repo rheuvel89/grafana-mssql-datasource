@@ -14,6 +14,7 @@ const KnownAzureClouds: Array<SelectableValue<AzureCloud>> = [{ value: AzureClou
 export const AzureAuthSettings = (props: HttpSettingsBaseProps) => {
   const { dataSourceConfig: dsSettings, onChange } = props;
   const managedIdentityEnabled = config.azure.managedIdentityEnabled;
+  const workloadIdentityEnabled = config.azure.workloadIdentityEnabled;
   const azureEntraPasswordCredentialsEnabled = config.azure.azureEntraPasswordCredentialsEnabled;
   const userIdentityEnabled = config.azure.userIdentityEnabled;
 
@@ -33,6 +34,7 @@ export const AzureAuthSettings = (props: HttpSettingsBaseProps) => {
   return (
     <AzureCredentialsForm
       managedIdentityEnabled={managedIdentityEnabled}
+      workloadIdentityEnabled={workloadIdentityEnabled}
       azureEntraPasswordCredentialsEnabled={azureEntraPasswordCredentialsEnabled}
       userIdentityEnabled={userIdentityEnabled}
       credentials={credentials}

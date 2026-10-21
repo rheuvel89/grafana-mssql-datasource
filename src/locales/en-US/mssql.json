@@ -13,6 +13,7 @@
       "auth-options-app-registration": "App Registration",
       "auth-options-azure-entra": "Azure Entra Password",
       "auth-options-managed-identity": "Managed Identity",
+      "auth-options-workload-identity": "Workload Identity",
       "client-secret-reset": "Reset",
       "description-authentication": "Choose the type of authentication to Azure services",
       "label-application-client-id": "Application Client ID",

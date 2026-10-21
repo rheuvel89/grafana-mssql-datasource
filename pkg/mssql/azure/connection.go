@@ -16,6 +16,34 @@ func GetAzureCredentialDSNFragment(azureCredentials azcredentials.AzureCredentia
 		}
 		connStr += fmt.Sprintf("fedauth=%s;",
 			"ActiveDirectoryManagedIdentity")
+	case *azcredentials.AzureWorkloadIdentityCredentials:
+		if !azureSettings.WorkloadIdentityEnabled {
+			return "", fmt.Errorf("workload identity authentication is not enabled")
+		}
+		// Per-datasource client and tenant IDs take precedence over the instance-wide settings.
+		// Any value left empty is resolved by the driver from the AZURE_CLIENT_ID, AZURE_TENANT_ID
+		// and AZURE_FEDERATED_TOKEN_FILE environment variables injected by the workload identity webhook.
+		clientId, tenantId, tokenFile := c.ClientId, c.TenantId, ""
+		if wi := azureSettings.WorkloadIdentitySettings; wi != nil {
+			if clientId == "" {
+				clientId = wi.ClientId
+			}
+			if tenantId == "" {
+				tenantId = wi.TenantId
+			}
+			tokenFile = wi.TokenFile
+		}
+		if clientId != "" {
+			if tenantId != "" {
+				connStr += fmt.Sprintf("user id=%s@%s;", clientId, tenantId)
+			} else {
+				connStr += fmt.Sprintf("user id=%s;", clientId)
+			}
+		}
+		if tokenFile != "" {
+			connStr += fmt.Sprintf("tokenfilepath=%s;", tokenFile)
+		}
+		connStr += fmt.Sprintf("fedauth=%s;", "ActiveDirectoryWorkloadIdentity")
 	case *azcredentials.AzureClientSecretCredentials:
 		// "password" is passed as an argument rather than embedded in the
 		// format string to prevent "password=%s" from appearing in the

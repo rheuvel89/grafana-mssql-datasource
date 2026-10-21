@@ -7,6 +7,7 @@ import { Button, Field, Select, Input } from '@grafana/ui';
 
 export interface Props {
   managedIdentityEnabled: boolean;
+  workloadIdentityEnabled: boolean;
   azureEntraPasswordCredentialsEnabled: boolean;
   userIdentityEnabled: boolean;
   credentials: AzureCredentials;
@@ -18,6 +19,7 @@ export interface Props {
 export const AzureCredentialsForm = (props: Props) => {
   const {
     managedIdentityEnabled,
+    workloadIdentityEnabled,
     azureEntraPasswordCredentialsEnabled,
     credentials,
     azureCloudOptions,
@@ -137,6 +139,12 @@ export const AzureCredentialsForm = (props: Props) => {
     authTypeOptions.push({
       value: 'msi',
       label: t('azureauth.azure-credentials-form.auth-options-managed-identity', 'Managed Identity'),
+    });
+  }
+  if (workloadIdentityEnabled) {
+    authTypeOptions.push({
+      value: 'workloadidentity',
+      label: t('azureauth.azure-credentials-form.auth-options-workload-identity', 'Workload Identity'),
     });
   }
   if (azureEntraPasswordCredentialsEnabled) {
