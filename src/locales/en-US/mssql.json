@@ -16,6 +16,7 @@
       "auth-options-workload-identity": "Workload Identity",
       "client-secret-reset": "Reset",
       "description-authentication": "Choose the type of authentication to Azure services",
+      "description-workload-identity": "Workload Identity uses the managed identity configured in the <1>[azure]</1> section of the Grafana configuration: <3>workload_identity_client_id</3>, <5>workload_identity_tenant_id</5> and <8>workload_identity_token_file</8>.",
       "label-application-client-id": "Application Client ID",
       "label-authentication": "Authentication",
       "label-azure-cloud": "Azure Cloud",
@@ -33,7 +34,8 @@
       "required-client-id": "Client ID is required",
       "required-client-secret": "Client secret is required",
       "required-password": "Password is required",
-      "required-tenant-id": "Tenant ID is required"
+      "required-tenant-id": "Tenant ID is required",
+      "title-workload-identity": "Configured in Grafana"
     }
   },
   "cheat-sheet": {

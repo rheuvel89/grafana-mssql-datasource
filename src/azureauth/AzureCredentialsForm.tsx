@@ -3,7 +3,7 @@ import { type ChangeEvent } from 'react';
 import { type AzureCredentials, type AzureAuthType } from '@grafana/azure-sdk';
 import { type SelectableValue } from '@grafana/data';
 import { Trans, t } from '@grafana/i18n';
-import { Button, Field, Select, Input } from '@grafana/ui';
+import { Alert, Button, Field, Select, Input } from '@grafana/ui';
 
 export interface Props {
   managedIdentityEnabled: boolean;
@@ -180,6 +180,18 @@ export const AzureCredentialsForm = (props: Props) => {
           disabled={disabled}
         />
       </Field>
+      {credentials.authType === 'workloadidentity' && (
+        <Alert
+          severity="info"
+          title={t('azureauth.azure-credentials-form.title-workload-identity', 'Configured in Grafana')}
+        >
+          <Trans i18nKey="azureauth.azure-credentials-form.description-workload-identity">
+            Workload Identity uses the managed identity configured in the <code>[azure]</code> section of the Grafana
+            configuration: <code>workload_identity_client_id</code>, <code>workload_identity_tenant_id</code> and{' '}
+            <code>workload_identity_token_file</code>.
+          </Trans>
+        </Alert>
+      )}
       {credentials.authType === 'clientsecret' && (
         <>
           {azureCloudOptions && (

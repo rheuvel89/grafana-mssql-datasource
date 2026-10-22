@@ -41,5 +41,6 @@ describe('AzureCredentialsForm', () => {
     expect(screen.getByText('Workload Identity')).toBeInTheDocument();
     expect(screen.queryByLabelText('Tenant ID')).not.toBeInTheDocument();
     expect(screen.queryByLabelText('Client ID')).not.toBeInTheDocument();
+    expect(screen.getByText('Configured in Grafana')).toBeInTheDocument();
   });
 });
