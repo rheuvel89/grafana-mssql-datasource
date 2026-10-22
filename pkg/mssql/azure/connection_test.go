@@ -9,6 +9,8 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+const tokenFile = "/var/run/secrets/azure/tokens/azure-identity-token"
+
 func TestGetAzureCredentialDSNFragment_WorkloadIdentity(t *testing.T) {
 	tests := []struct {
 		name        string
@@ -24,10 +26,31 @@ func TestGetAzureCredentialDSNFragment_WorkloadIdentity(t *testing.T) {
 			expectedErr: "workload identity authentication is not enabled",
 		},
 		{
-			name:        "relies on environment variables when nothing is configured",
+			name:        "returns error when client ID is not configured",
 			credentials: &azcredentials.AzureWorkloadIdentityCredentials{},
 			settings:    &azsettings.AzureSettings{WorkloadIdentityEnabled: true},
-			expected:    "fedauth=ActiveDirectoryWorkloadIdentity;",
+			expectedErr: "workload identity client ID is not configured, set workload_identity_client_id in the [azure] section of the Grafana configuration",
+		},
+		{
+			name:        "returns error when tenant ID is not configured",
+			credentials: &azcredentials.AzureWorkloadIdentityCredentials{ClientId: "ds-client"},
+			settings: &azsettings.AzureSettings{
+				WorkloadIdentityEnabled:  true,
+				WorkloadIdentitySettings: &azsettings.WorkloadIdentitySettings{TokenFile: tokenFile},
+			},
+			expectedErr: "workload identity tenant ID is not configured, set workload_identity_tenant_id in the [azure] section of the Grafana configuration",
+		},
+		{
+			name:        "returns error when token file is not configured",
+			credentials: &azcredentials.AzureWorkloadIdentityCredentials{},
+			settings: &azsettings.AzureSettings{
+				WorkloadIdentityEnabled: true,
+				WorkloadIdentitySettings: &azsettings.WorkloadIdentitySettings{
+					ClientId: "instance-client",
+					TenantId: "instance-tenant",
+				},
+			},
+			expectedErr: "workload identity token file is not configured, set workload_identity_token_file in the [azure] section of the Grafana configuration",
 		},
 		{
 			name:        "uses instance-wide settings",
@@ -37,10 +60,10 @@ func TestGetAzureCredentialDSNFragment_WorkloadIdentity(t *testing.T) {
 				WorkloadIdentitySettings: &azsettings.WorkloadIdentitySettings{
 					ClientId:  "instance-client",
 					TenantId:  "instance-tenant",
-					TokenFile: "/var/run/secrets/azure/tokens/azure-identity-token",
+					TokenFile: tokenFile,
 				},
 			},
-			expected: "user id=instance-client@instance-tenant;tokenfilepath=/var/run/secrets/azure/tokens/azure-identity-token;fedauth=ActiveDirectoryWorkloadIdentity;",
+			expected: "user id=instance-client@instance-tenant;tokenfilepath=" + tokenFile + ";fedauth=ActiveDirectoryWorkloadIdentity;",
 		},
 		{
 			name: "datasource client and tenant IDs override instance-wide settings",
@@ -51,17 +74,12 @@ func TestGetAzureCredentialDSNFragment_WorkloadIdentity(t *testing.T) {
 			settings: &azsettings.AzureSettings{
 				WorkloadIdentityEnabled: true,
 				WorkloadIdentitySettings: &azsettings.WorkloadIdentitySettings{
-					ClientId: "instance-client",
-					TenantId: "instance-tenant",
+					ClientId:  "instance-client",
+					TenantId:  "instance-tenant",
+					TokenFile: tokenFile,
 				},
 			},
-			expected: "user id=ds-client@ds-tenant;fedauth=ActiveDirectoryWorkloadIdentity;",
-		},
-		{
-			name:        "client ID without tenant ID",
-			credentials: &azcredentials.AzureWorkloadIdentityCredentials{ClientId: "ds-client"},
-			settings:    &azsettings.AzureSettings{WorkloadIdentityEnabled: true},
-			expected:    "user id=ds-client;fedauth=ActiveDirectoryWorkloadIdentity;",
+			expected: "user id=ds-client@ds-tenant;tokenfilepath=" + tokenFile + ";fedauth=ActiveDirectoryWorkloadIdentity;",
 		},
 	}
 

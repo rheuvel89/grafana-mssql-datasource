@@ -306,7 +306,8 @@ export const ConfigurationEditor = (props: DataSourcePluginOptionsEditorProps<Ms
               <li>
                 <Trans i18nKey="configuration.configuration-editor.description-auth-type-azure-auth">
                   <i>Azure Authentication</i> Securely authenticate and access Azure resources and applications using
-                  Azure AD credentials - Managed Service Identity and Client Secret Credentials are supported.
+                  Azure AD credentials - Managed Service Identity, Workload Identity and Client Secret Credentials are
+                  supported.
                 </Trans>
               </li>
               <li>
