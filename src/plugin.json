@@ -1,7 +1,7 @@
 {
   "type": "datasource",
   "name": "Microsoft SQL Server",
-  "id": "mssql",
+  "id": "mssql-alt",
   "executable": "gpx_grafana-mssql-datasource",
   "category": "sql",
 
